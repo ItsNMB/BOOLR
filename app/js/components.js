@@ -4,6 +4,8 @@ var wires = [];
 // When for example a custom component inside a custom component is opened, the path of custom components is saved in the following array
 let path = [];
 
+var default_delay = 10000;
+
 /*
 Adds component to the board
 @param {object} component
@@ -1567,7 +1569,9 @@ class Component {
         if(settings.showComponentUpdates) this.highlight(250);
 
         // Update output ports
-        this.function();
+        // this.function();
+        setTimeout(this.function(), default_delay);
+        console.log(default_delay);
 
         const wires = [];
         const values = [];
@@ -1970,6 +1974,7 @@ class NOT extends Component {
         this.function = function() {
             this.output[0].value = 1 - this.input[0].value;
         }
+        
     }
 }
 
@@ -1981,6 +1986,21 @@ class AND extends Component {
         this.addOutputPort({ side: 1, pos: 0 });
         this.function = function() {
             this.output[0].value = this.input[0].value & this.input[1].value;
+        }
+    }
+}
+
+class NAND extends Component {
+    constructor(name, pos) {
+        super (name, pos, 2, 2, {type: "char", text: "!&"});
+        this.addInputPort({side: 3, pos: 1});
+        this.addInputPort({side: 3, pos: 0});
+        this.addOutputPort({side: 1, pos: 0});
+        this.function = function() {
+            if (this.input[0].value & this.input[1].value == 1)
+                this.output[0].value = 0;
+            else
+                this.output[0].value = 1;
         }
     }
 }
@@ -1997,6 +2017,21 @@ class OR extends Component {
     }
 }
 
+class NOR extends Component {
+    constructor(name,pos) {
+        super(name,pos,2,2,{ type: "char", text: "!|" });
+        this.addInputPort({ side: 3, pos: 1 });
+        this.addInputPort({ side: 3, pos: 0 });
+        this.addOutputPort({ side: 1, pos: 0 });
+        this.function = function() {
+            if (this.input[0].value | this.input[1].value)
+                this.output[0].value = 0;
+            else
+                this.output[0].value = 1;
+        }
+    }
+}
+
 class XOR extends Component {
     constructor(name,pos) {
         super(name,pos,2,2,{ type: "char", text: "^" });
@@ -2005,6 +2040,21 @@ class XOR extends Component {
         this.addOutputPort({ side: 1, pos: 0 });
         this.function = function() {
             this.output[0].value = this.input[0].value ^ this.input[1].value;
+        }
+    }
+}
+
+class XNOR extends Component {
+    constructor(name,pos) {
+        super(name,pos,2,2,{ type: "char", text: "!^" });
+        this.addInputPort({ side: 3, pos: 1 });
+        this.addInputPort({ side: 3, pos: 0 });
+        this.addOutputPort({ side: 1, pos: 0 });
+        this.function = function() {
+            if (this.input[0].value ^ this.input[1].value)
+                this.output[0].value = 0;
+            else
+                this.output[0].value = 1;
         }
     }
 }
